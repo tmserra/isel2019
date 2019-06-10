@@ -39,6 +39,7 @@ void isr_gpio(void* arg) {
 }
 
 static int presence (fsm_t* this) {return done0; }
+static int no_presence (fsm_t* this) {return !done0; }
 
 static void set_alarmon (fsm_t* this) { done0 = 0; GPIO_OUTPUT_SET(2, 0); }
 static void set_alarmoff (fsm_t* this) { done0 = 0; GPIO_OUTPUT_SET(2, 1); }
@@ -50,7 +51,8 @@ static void set_alarmoff (fsm_t* this) { done0 = 0; GPIO_OUTPUT_SET(2, 1); }
  */
 static fsm_trans_t interruptor[] = {
   { ALARM_OFF, presence, ALARM_ON , set_alarmon },
-  { ALARM_ON, presence, ALARM_OFF, set_alarmoff},
+  { ALARM_ON, presence, ALARM_ON, set_alarmon},
+  { ALARM_ON, no_presence, ALARM_OFF, set_alarmoff},
   {-1, NULL, -1, NULL },
 };
 
